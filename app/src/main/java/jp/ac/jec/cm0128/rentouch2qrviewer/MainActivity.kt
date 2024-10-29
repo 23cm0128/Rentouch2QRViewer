@@ -26,7 +26,7 @@ import java.util.TimerTask
 
 class MainActivity : AppCompatActivity() {
     val timer: Timer = Timer()
-    val deviceName = "hoge"
+    val deviceName = Build.ID
     var remainBattery = 0
 
     var isBright = false
