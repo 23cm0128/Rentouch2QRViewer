@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Rentouch2返却用アプリ</string>
+    <string name="return_qr_label">返却用端末のQRリーダーにかざしてください</string>
+</resources>
