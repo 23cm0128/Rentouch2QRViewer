@@ -17,6 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
     
     <TextView
+        android:id="@+id/hint_text"
         android:padding="12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,5 +25,14 @@
         app:layout_constraintTop_toBottomOf="@id/qr_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/re_generate_qr_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/re_generate_qr_label"
+        app:layout_constraintTop_toBottomOf="@id/hint_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

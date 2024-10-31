@@ -8,8 +8,10 @@ import android.graphics.Color
 import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
@@ -26,7 +28,6 @@ import java.util.TimerTask
 
 class MainActivity : AppCompatActivity() {
     val timer: Timer = Timer()
-    val deviceName = Build.ID
     var remainBattery = 0
 
     var isBright = false
@@ -40,6 +41,8 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        val androidId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+
         findViewById<ImageView>(R.id.qr_view).setOnClickListener {
             val windowAttributes = window.attributes
             if(isBright){
@@ -51,35 +54,43 @@ class MainActivity : AppCompatActivity() {
             isBright = !isBright
         }
 
+        findViewById<Button>(R.id.re_generate_qr_button).setOnClickListener {
+            generateQR(androidId)
+        }
+
 
         timer.schedule(object : TimerTask() {
             override fun run() {
-                try{
-                    val bitmapMatrix = MultiFormatWriter().encode(
-                        "$deviceName, ${Date().time}, ${remainBattery}",
-                        BarcodeFormat.QR_CODE,
-                        500,
-                        500
-                    )
-                    val qrBitmap = BarcodeEncoder().createBitmap(bitmapMatrix)
-
-                    runOnUiThread{
-                        findViewById<ImageView>(R.id.qr_view).setImageBitmap(qrBitmap)
-                    }
-                } catch (e: Exception){
-                    Snackbar
-                        .make(findViewById(R.id.main), "QRコードの生成に失敗しました", Snackbar.LENGTH_SHORT)
-                        .setAction("詳細"){
-                            AlertDialog.Builder(this@MainActivity)
-                                .setMessage(e.stackTraceToString())
-                                .show()
-                        }
-                        .show()
-                }
+                generateQR(androidId)
             }
         }, 0, 5000)
 
         registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+    }
+
+    private fun generateQR(androidId: String) {
+        try{
+            val bitmapMatrix = MultiFormatWriter().encode(
+                "$androidId, ${Date().time}, ${remainBattery}",
+                BarcodeFormat.QR_CODE,
+                500,
+                500
+            )
+            val qrBitmap = BarcodeEncoder().createBitmap(bitmapMatrix)
+
+            runOnUiThread{
+                findViewById<ImageView>(R.id.qr_view).setImageBitmap(qrBitmap)
+            }
+        } catch (e: Exception){
+            Snackbar
+                .make(findViewById(R.id.main), "QRコードの生成に失敗しました", Snackbar.LENGTH_SHORT)
+                .setAction("詳細"){
+                    AlertDialog.Builder(this@MainActivity)
+                        .setMessage(e.stackTraceToString())
+                        .show()
+                }
+                .show()
+        }
     }
 
     // バッテリーの状態を受信するBroadcastReceiver
